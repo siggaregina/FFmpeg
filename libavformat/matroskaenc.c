@@ -144,6 +144,7 @@ typedef struct MatroskaMuxContext {
     int have_attachments;
     int have_video;
 
+    int reserve_free_space;
     int reserve_cues_space;
     int cluster_size_limit;
     int64_t cues_pos;
@@ -2005,6 +2006,12 @@ static int mkv_write_header(AVFormatContext *s)
         ret = AVERROR(ENOMEM);
         goto fail;
     }
+    if (mkv->reserve_free_space) {
+        if (mkv->reserve_free_space == 1)
+            mkv->reserve_free_space++;
+        put_ebml_void(pb, mkv->reserve_free_space);
+    }
+    
     if ((pb->seekable & AVIO_SEEKABLE_NORMAL) && mkv->reserve_cues_space) {
         mkv->cues_pos = avio_tell(pb);
         if (mkv->reserve_cues_space == 1)
@@ -2767,6 +2774,7 @@ static const AVCodecTag additional_subtitle_tags[] = {
 #define OFFSET(x) offsetof(MatroskaMuxContext, x)
 #define FLAGS AV_OPT_FLAG_ENCODING_PARAM
 static const AVOption options[] = {
+    {"reserve_free_space", "Reserve a given amount of space at the beginning og the file for unspecified purpose.", OFFSET(reserve_free_space), AV_OPT_TYPE_INT,   { .i64 = 0 },   0, INT_MAX,   FLAGS },
     { "reserve_index_space", "Reserve a given amount of space (in bytes) at the beginning of the file for the index (cues).", OFFSET(reserve_cues_space), AV_OPT_TYPE_INT,   { .i64 = 0 },   0, INT_MAX,   FLAGS },
     { "cluster_size_limit",  "Store at most the provided amount of bytes in a cluster. ",                                     OFFSET(cluster_size_limit), AV_OPT_TYPE_INT  , { .i64 = -1 }, -1, INT_MAX,   FLAGS },
     { "cluster_time_limit",  "Store at most the provided number of milliseconds in a cluster.",                               OFFSET(cluster_time_limit), AV_OPT_TYPE_INT64, { .i64 = -1 }, -1, INT64_MAX, FLAGS },

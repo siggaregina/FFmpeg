@@ -1213,6 +1213,10 @@ ffmpeg -i sample_left_right_clip.mpg -an -c:v libvpx -metadata stereo_mode=left_
 This muxer supports the following options:
 
 @table @option
+
+@item reserve_free_space
+Reserve the specified amount of bytes for unspecified purpose within the file header.
+
 @item reserve_index_space
 By default, this muxer writes the index for seeking (called cues in Matroska
 terms) at the end of the file, because it cannot know in advance how much space

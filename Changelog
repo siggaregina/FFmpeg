@@ -21,6 +21,7 @@ version <next>:
 - Brooktree ProSumer video decoder
 - MatchWare Screen Capture Codec decoder
 - WinCam Motion Video decoder
+- Matroska muxer has optional free space for unspecified use at the beginning of the file.
 
 
 version 4.0:
